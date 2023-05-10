@@ -1,0 +1,22 @@
+.nav-item,
+.nav-item__active {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 20px;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.nav-item__active {
+  color: #5e96fc;
+}
+
+@media screen and (max-width: 768px) {
+  .nav-item,
+  .nav-item__active {
+    margin: 10px;
+  }
+}
