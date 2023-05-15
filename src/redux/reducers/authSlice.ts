@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { IRequestAuth } from "../../models/auth";
+import { IRequestAuth } from "../../models/redux/auth";
 
 interface IInitialState {}
 
@@ -27,7 +27,7 @@ export const passwordAuth = createAsyncThunk<IRequestAuth>(
       headers: {
         "Content-Type": "application/json",
         "x-secret-key": "GEU4nvd3rej*jeh.eqp",
-        // Authorization: `Bearer ${getLocalStorage(token.access_token)}`,
+        "X-Api-App-Id": `${client_secret}`,
       },
     });
 
@@ -54,5 +54,4 @@ export const authSlice = createSlice({
 });
 
 export const {} = authSlice;
-
 export default authSlice.reducer;

@@ -1,7 +1,7 @@
 import React from "react";
-import "./error.css";
+import "./errorPage.css";
 
-const Error = () => {
+const ErrorPage = () => {
   return (
     <div>
       <h1>ErrorPage</h1>
@@ -9,4 +9,4 @@ const Error = () => {
   );
 };
 
-export default Error;
+export default ErrorPage;
