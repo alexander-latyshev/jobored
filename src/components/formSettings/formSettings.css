@@ -1,0 +1,60 @@
+.form-settings {
+  width: calc(315px - (20px * 2));
+  height: calc(360px - (20px * 2));
+  background-color: white;
+  padding: 20px;
+  border: 1px solid #eaebed;
+  border-radius: 12px;
+}
+
+.form-settings__title {
+  display: flex;
+  width: 100%;
+  height: 20px;
+  justify-content: space-between;
+}
+
+.form-settings__reset-btn {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 500;
+  width: 115px;
+  font-size: 14px;
+  line-height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  gap: 4px;
+  color: #acadb9;
+  transition: 0.2s ease-in-out;
+}
+.form-settings__reset-btn:hover {
+  color: #5e96fc;
+}
+.form-settings__dropdown-btn,
+.form-settings__dropdown-btn_active {
+  width: 30px;
+  position: absolute;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 0;
+}
+.form-settings__dropdown-btn path,
+.form-settings__dropdown-btn_active path {
+  stroke: #acadb9;
+}
+
+.form-settings__dropdown-btn_active path {
+  stroke: #5e96fc;
+}
+
+.form-settings__dropdown-btn_active {
+  transform: rotate(180deg);
+}

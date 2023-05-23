@@ -1,39 +1,88 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { IRequestJobs, IVacancy } from "../../models/redux/jobs";
+import { IFormOptions, IRequestJobs, IVacancy } from "../../models/redux/jobs";
+import {
+  CLIENT_SECRET,
+  COUNT_PAGE_ITEMS,
+  PROXY_URL,
+  X_SECRET_KEY,
+} from "../../consts";
+import { tokens } from "../../consts";
+import { ICatalogue } from "../../models/redux/catalogues";
+import getQueryParams from "../../helpers/queryParams";
 
 interface IInitialState {
   vacancies: IVacancy[] | null;
+  totalPages: number;
   loading: boolean;
   favorites: IVacancy[];
+  formOptions: IFormOptions;
+  catalogues: ICatalogue[];
 }
+
+export const initialForm: IFormOptions = {
+  industry: "",
+  keyword: "",
+  payment_from: undefined,
+  payment_to: undefined,
+};
 
 const initialState: IInitialState = {
   vacancies: null,
+  totalPages: 0,
   loading: false,
-  favorites: JSON.parse(localStorage.getItem("favorites") || "{}"),
+  favorites: JSON.parse(localStorage.getItem("favorites") || "[]"),
+  catalogues: [],
+  formOptions: initialForm,
 };
 
-const proxyUrl: string = "https://startup-summer-2023-proxy.onrender.com/2.0/";
-const client_secret: string =
-  "v3.r.137440105.ffdbab114f92b821eac4e21f485343924a773131.06c3bdbb8446aeb91c35b80c42ff69eb9c457948";
+export const fetchJobs = createAsyncThunk<
+  IRequestJobs,
+  { formOptions: IFormOptions; page: number }
+>("jobs/fetchJobs", async ({ formOptions, page }) => {
+  const params = getQueryParams(formOptions);
+  const url: string =
+    `${PROXY_URL}/vacancies/?published=1&count=${COUNT_PAGE_ITEMS}&page=${page}` +
+    `${params ? `&${params}` : ""}`;
 
-export const fetchJobs = createAsyncThunk<IRequestJobs, number>(
-  "jobs/fetchJobs",
-  async (page: number) => {
-    const url: string = `${proxyUrl}vacancies/?count=4&page=${page}`;
+  if (tokens?.access_token) {
     try {
       const res = await fetch(url, {
         method: "GET",
         headers: {
-          "Content-Type": "applicati0on/json",
-          "x-secret-key": "GEU4nvd3rej*jeh.eqp",
-          "X-Api-App-Id": `${client_secret}`,
+          "Content-Type": "application/json",
+          "x-secret-key": `${X_SECRET_KEY}`,
+          "X-Api-App-Id": `${CLIENT_SECRET}`,
+          Authorization: `Bearer ${tokens.access_token}`,
         },
       });
       const result = await res.json();
       return result;
     } catch (e) {
       console.log(e);
+    }
+  }
+});
+
+export const fetchCatalogues = createAsyncThunk<Array<ICatalogue>>(
+  "jobs/fetchCatalogues",
+  async () => {
+    const url: string = `${PROXY_URL}/catalogues/`;
+    if (tokens?.access_token) {
+      try {
+        const res = await fetch(url, {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            "x-secret-key": `${X_SECRET_KEY}`,
+            "X-Api-App-Id": `${CLIENT_SECRET}`,
+            Authorization: `Bearer ${tokens.access_token}`,
+          },
+        });
+        const result = await res.json();
+        return result;
+      } catch (e) {
+        console.log(e);
+      }
     }
   }
 );
@@ -53,22 +102,38 @@ export const jobsSlice = createSlice({
       state.favorites = filteredFavorites;
       localStorage.setItem("favorites", JSON.stringify(state.favorites));
     },
+    setFormOptions: (state, { payload }: PayloadAction<IFormOptions>) => {
+      return { ...state, formOptions: payload };
+    },
   },
-  extraReducers(builder) {
+  extraReducers: (builder) => {
     builder
       .addCase(fetchJobs.pending, (state) => {
         return { ...state, loading: true };
       })
-      .addCase(fetchJobs.fulfilled, (state, action) => {
-        const { objects } = action.payload;
-        return {
-          ...state,
-          vacancies: objects,
-          loading: false,
-        };
-      });
+      .addCase(
+        fetchJobs.fulfilled,
+        (state, { payload }: PayloadAction<IRequestJobs>) => {
+          const { objects, total } = payload;
+          const totalPages = total > 125 ? 125 : total;
+
+          return {
+            ...state,
+            vacancies: objects,
+            loading: false,
+            totalPages: totalPages,
+          };
+        }
+      )
+      .addCase(
+        fetchCatalogues.fulfilled,
+        (state, { payload }: PayloadAction<ICatalogue[]>) => {
+          return { ...state, catalogues: payload };
+        }
+      );
   },
 });
 
-export const { addNewFavorite, removeFavorite } = jobsSlice.actions;
+export const { addNewFavorite, removeFavorite, setFormOptions } =
+  jobsSlice.actions;
 export default jobsSlice.reducer;

@@ -1,9 +1,11 @@
 import { createStyles } from "@mantine/core";
 
 export const usePaginationStyles = createStyles((theme) => ({
-  dots: {
+  control: {
     "&[data-active]": {
-      background: theme.colors.blue,
+      background: theme.colors.bluePrimary,
+      transition: "0.2s ease-in-out",
     },
   },
+  dots: { display: "none" },
 }));

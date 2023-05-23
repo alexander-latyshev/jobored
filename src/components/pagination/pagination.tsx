@@ -1,19 +1,11 @@
 import React, { SetStateAction, Dispatch } from "react";
 import { Pagination as MantinePagination } from "@mantine/core";
-import { usePaginationStyles } from "./pagination.style";
+import { usePaginationStyles } from "./pagination.style.ts";
 
 type Props = {
   total: number;
   activePage: number;
   setPage: Dispatch<SetStateAction<number>>;
-};
-
-type PaginationStyles = {
-  [key: string]: Record<string, string>;
-};
-
-const styles: PaginationStyles = {
-  dots: { display: "none" },
 };
 
 const Pagination = (props: Props) => {
@@ -29,8 +21,7 @@ const Pagination = (props: Props) => {
       siblings={1}
       mt={50}
       mb={50}
-      styles={styles}
-      classNames={{ control: classes.dots }}
+      classNames={{ control: classes.control, dots: classes.dots }}
     />
   );
 };

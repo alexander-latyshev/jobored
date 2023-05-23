@@ -1,17 +1,15 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { IRequestAuth } from "../../models/redux/auth";
+import { IRequestAuth, ITokens, IUser } from "../../models/redux/auth";
+import { PROXY_URL } from "../../consts";
 
-interface IInitialState {}
+interface IInitialState {
+  user: IUser | null;
+}
 
-const initialState: IInitialState = {};
-
-type ITokens = {
-  access_token: string;
-  refresh_token: string;
+const initialState: IInitialState = {
+  user: null,
 };
 
-const proxyUrl: string =
-  "https://startup-summer-2023-proxy.onrender.com/2.0/oauth2";
 const login: string = "sergei.stralenia@gmail.com";
 const password: string = "paralect123";
 const client_id: string = "2356";
@@ -21,7 +19,7 @@ const client_secret: string =
 export const passwordAuth = createAsyncThunk<IRequestAuth>(
   "auth/passwordAuth",
   async () => {
-    const url: string = `${proxyUrl}/password/?login=${login}&password=${password}&client_id=${client_id}&client_secret=${client_secret}`;
+    const url: string = `${PROXY_URL}/oauth2/password/?login=${login}&password=${password}&client_id=${client_id}&client_secret=${client_secret}`;
     const res = await fetch(url, {
       method: "GET",
       headers: {
@@ -47,8 +45,11 @@ export const authSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers(builder) {
-    builder.addCase(passwordAuth.fulfilled, (state) => {
-      return state;
+    builder.addCase(passwordAuth.fulfilled, (state, { payload }) => {
+      return {
+        ...state,
+        user: payload,
+      };
     });
   },
 });

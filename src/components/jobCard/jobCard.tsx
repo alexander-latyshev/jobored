@@ -4,51 +4,74 @@ import { Link } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../redux/hooks";
 import { addNewFavorite, removeFavorite } from "../../redux/reducers/jobsSlice";
 import { IVacancy } from "../../models/redux/jobs";
+import { IRequestJob } from "../../models/redux/currentJob";
+import classNames from "classnames";
 
 type Props = {
-  title: string;
+  title: string | undefined;
   url: string;
-  id: number;
+  id?: number | undefined;
   payment: Record<string, number | string>;
-  type_of_work: string;
-  town: string;
-  item: IVacancy;
+  type_of_work: string | undefined;
+  town: string | undefined;
+  item: IVacancy | IRequestJob;
+  styleType?: string;
 };
 
 const JobCard = (props: Props) => {
-  const { title, url, town, type_of_work, id, item } = props;
-  const { payment_from, payment_to, currency } = props?.payment;
-  const favorites = useAppSelector((state) => state.jobs.favorites);
   const dispatch = useAppDispatch();
-
+  const { title, url, town, type_of_work, id, item, styleType } = props;
+  const { payment_from, payment_to, currency } = props?.payment;
+  const { favorites } = useAppSelector((state) => state.jobs);
   const isFavorite = favorites?.find((fav: IVacancy) => fav.id === id);
 
   const changeFavorite = () => {
-    if (!isFavorite) return dispatch(addNewFavorite(item));
-    return dispatch(removeFavorite(item));
+    if (!isFavorite) return dispatch(addNewFavorite(item as IVacancy));
+    return dispatch(removeFavorite(item as IVacancy));
   };
 
   return (
-    <div className="job-card">
-      <Link className="job-card__title" to={url} draggable={false}>
-        {title}
-      </Link>
-      <span className="job-card__work-conditions">
-        <strong>
-          {payment_from !== 0 && payment_to === 0
-            ? "з/п от " + payment_from + " " + currency
-            : null}
-          {payment_to !== 0 && payment_from === 0
-            ? "з/п до " + payment_to + " " + currency
-            : null}
-          {payment_from !== 0 && payment_to !== 0
-            ? "з/п " + payment_from + " - " + payment_to + " " + currency
-            : null}
-        </strong>
-        <p>{type_of_work}</p>
+    <div
+      className={classNames("job-card", {
+        "job-card_page": styleType === "page",
+      })}
+      data-elem={`vacancy-${id}`}
+    >
+      {styleType === "list" ? (
+        <Link to={url} draggable={false} className="job-card__title">
+          {title}
+        </Link>
+      ) : styleType === "page" ? (
+        <h3 className="job-card__title_page">{title}</h3>
+      ) : null}
+
+      <span
+        className={classNames("job-card__work-conditions", {
+          "job-card__work-conditions_page": styleType === "page",
+        })}
+      >
+        {+payment_from + +payment_to !== 0 ? (
+          <strong>
+            {payment_from !== 0 && payment_to === 0
+              ? "з/п от " + payment_from + " " + currency
+              : null}
+            {payment_to !== 0 && payment_from === 0
+              ? "з/п до " + payment_to + " " + currency
+              : null}
+            {payment_from !== 0 && payment_to !== 0
+              ? "з/п " + payment_from + " - " + payment_to + " " + currency
+              : null}
+          </strong>
+        ) : null}
+        <img src="/src/assets/point.png" />
+        <p className="">{type_of_work ? type_of_work : null}</p>
       </span>
 
-      <span className="job-card__address">
+      <span
+        className={classNames("job-card__address", {
+          "job-card__address_page": styleType === "page",
+        })}
+      >
         <img src="/src/assets/location.svg" /> <p>{town}</p>
       </span>
       <button

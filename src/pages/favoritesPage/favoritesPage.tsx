@@ -29,6 +29,7 @@ const FavoritesPage = () => {
               type_of_work={fav.type_of_work.title}
               town={fav.town.title}
               item={fav}
+              styleType="list"
             />
           );
         })
