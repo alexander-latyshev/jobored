@@ -2,7 +2,7 @@ import React from "react";
 import "./favoritesPage.css";
 import { useAppSelector } from "../../redux/hooks";
 import JobCard from "../../components/jobCard/jobCard";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { IVacancy } from "../../models/redux/jobs";
 
 const FavoritesPage = () => {
@@ -12,7 +12,13 @@ const FavoritesPage = () => {
   return (
     <section className="favourites">
       {!favorites?.length ? (
-        <h1>Empty</h1>
+        <div className="favourites-empty">
+          <img src="/src/assets/empty.png" className="favourites-empty__img" />
+          <h1>Упс, здесь еще ничего нет!</h1>
+          <Link to={"/jobs"} className="favourites-empty__btn">
+            Поиск Вакансий
+          </Link>
+        </div>
       ) : (
         favorites?.map((fav: IVacancy, idx: number) => {
           return (
