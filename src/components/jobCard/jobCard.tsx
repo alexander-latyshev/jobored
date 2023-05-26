@@ -6,6 +6,8 @@ import { addNewFavorite, removeFavorite } from "../../redux/reducers/jobsSlice";
 import { IVacancy } from "../../models/redux/jobs";
 import { IRequestJob } from "../../models/redux/currentJob";
 import classNames from "classnames";
+import locationImg from "/src/assets/location.svg";
+import pointImg from "/src/assets/point.png";
 
 type Props = {
   title: string | undefined;
@@ -63,7 +65,7 @@ const JobCard = (props: Props) => {
               : null}
           </strong>
         ) : null}
-        <img src="/src/assets/point.png" />
+        <img src={pointImg} />
         <p className="">{type_of_work ? type_of_work : null}</p>
       </span>
 
@@ -72,7 +74,7 @@ const JobCard = (props: Props) => {
           "job-card__address_page": styleType === "page",
         })}
       >
-        <img src="/src/assets/location.svg" /> <p>{town}</p>
+        <img src={locationImg} /> <p>{town}</p>
       </span>
       <button
         className="job-card__btn"
