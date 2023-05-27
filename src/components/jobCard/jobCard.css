@@ -112,8 +112,14 @@
 }
 
 @media screen and (max-width: 768px) {
+  .job-card {
+    height: auto;
+  }
   .job-card__work-conditions {
     flex-direction: column;
+  }
+  .job-card__work-conditions img {
+    display: none;
   }
   .job-card__work-conditions p {
     margin-top: 6px;
