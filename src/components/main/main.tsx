@@ -13,6 +13,7 @@ const Main = () => {
         <Route path="/jobs" element={<JobsPage />} />
         <Route path="/favourites" element={<FavoritesPage />} />
         <Route path="/:category/:jobID" element={<JobPage />} />
+        <Route path="*" element={<p>Page not found</p>} />
       </Routes>
     </main>
   );
